@@ -162,7 +162,7 @@ module.exports = function IdempotencyMixin(Model) {
       if (rinstance) {
         return cb({message : 'STOP', instance : rinstance});
       }
-      if(nModel.settings._versioning){
+      if(ctx.Model.settings._versioning){
         return ctx.Model.switchVersion(ctx, cb);
       }
       return cb();
