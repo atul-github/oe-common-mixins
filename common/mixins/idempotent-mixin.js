@@ -23,8 +23,11 @@ var mergeQuery = require('loopback-datasource-juggler/lib/utils').mergeQuery;
 function fromCreateCallback(){
   var err = new Error();
   var m = err.stack.split('\n');
-  
+  if(m[3].indexOf('    at createCallback') === 0 && m[3].indexOf('loopback-datasource-juggler/lib/dao.js') > 0){
+    return true;
+  }
 }
+
 module.exports = function IdempotencyMixin(Model) {
   console.log('idempotent mixin attached to ', Model.modelName);
   function overrideCreate(nModel){
@@ -33,8 +36,8 @@ module.exports = function IdempotencyMixin(Model) {
       var self = this;
 
       _create.call(self, data, options, function(err, result){
-        if(err === 'STOP'){
-          return cb(undefined, result);
+        if(err && err.message === 'STOP'){
+          return cb(undefined, err.instance);
         }
         if(err && fromCreateCallback()) {
           var context = {
@@ -55,13 +58,28 @@ module.exports = function IdempotencyMixin(Model) {
         }
       });
     }
+
+    var _updateAttributes = nModel.prototype.updateAttributes;
+    nModel.prototype.updateAttributes = function(data, options, cb){
+      var self=this;
+
+      _updateAttributes.call(self, data, options, function(err, result){
+        if(err && err.message === 'STOP'){
+          return cb(undefined, err.instance);
+        }
+      });
+    }
   }
+
   overrideCreate(Model);
 
   Model.findInHistory = function findInHistory(ctx, cb) {
     var data = ctx.data || ctx.instance;
-    if (!Model._historyModel) {
-      return cb();
+    if (!Model._historyModel || !data._newVersion) {
+      process.nextTick(function() { 
+        cb(); 
+      });
+      return;
     }
     var whereClause = {
       '_version': data._newVersion
@@ -88,7 +106,7 @@ module.exports = function IdempotencyMixin(Model) {
 
   Model.checkIdempotencyAfter = function modelCheckIdempotencyAfter(err, ctx, cb) {
     var data = ctx.data || ctx.instance;
-    if (ctx.isNewInstance && err) {
+    if (ctx.isNewInstance && err && data._version) {
       var whereClause = {
         '_version': data._version
       };
@@ -114,6 +132,21 @@ module.exports = function IdempotencyMixin(Model) {
     }
   };
 
+  Model.evObserve('loaded', function (ctx, cb) {
+    if(!ctx.data || ctx.data.count===0){
+      Model.checkIdempotencyAfter('dummy error', ctx,  function(e, r) {
+        if(e){
+          return cb(e);
+        }
+        if(r){
+          return cb({message : 'STOP', instance: r});
+        }
+        return cb();
+      });
+    }
+    return cb();
+  });
+
 
   Model.evObserve('before save', function (ctx, cb) {
     var data = ctx.data || ctx.instance;
@@ -127,8 +160,12 @@ module.exports = function IdempotencyMixin(Model) {
         return cb(err);
       }
       if (rinstance) {
-        return cb('STOP', rinstance);
+        return cb({message : 'STOP', instance : rinstance});
       }
+      if(nModel.settings._versioning){
+        return ctx.Model.switchVersion(ctx, cb);
+      }
+      return cb();
     }
 
     if (ctx.isNewInstance) {
@@ -141,11 +178,11 @@ module.exports = function IdempotencyMixin(Model) {
     } else if (data._newVersion) {
       // update case by id
       if (ctx.currentInstance && ctx.currentInstance._version === data._newVersion) {
-        return cb(null, ctx.currentInstance);
+        return commonCallback();
       }
       return Model.findInHistory(ctx, commonCallback);
     }
-    return cb();
+    return commonCallback();
   })
 
 };
