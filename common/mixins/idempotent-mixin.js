@@ -29,7 +29,6 @@ function fromCreateCallback(){
 }
 
 module.exports = function IdempotencyMixin(Model) {
-  return;
   console.log('idempotent mixin attached to ', Model.modelName);
   function overrideCreate(nModel){
     var _create = nModel.create;
@@ -72,6 +71,7 @@ module.exports = function IdempotencyMixin(Model) {
         if(err && err.message === 'STOP'){
           return cb(undefined, err.instance);
         }
+        return cb(err, result);
       });
     }
   }
