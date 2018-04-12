@@ -1,6 +1,6 @@
 /**
  *
- * ©2016-2017 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ * ©2018-2019 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
  * Bangalore, India. All Rights Reserved.
  *
  */
@@ -29,11 +29,16 @@ function fromCreateCallback(){
 }
 
 module.exports = function IdempotencyMixin(Model) {
+  return;
   console.log('idempotent mixin attached to ', Model.modelName);
   function overrideCreate(nModel){
     var _create = nModel.create;
     nModel.create = function (data, options, cb) {
       var self = this;
+      if(typeof options === 'function' && !cb){
+          cb = options;
+          options = {};
+      }
 
       _create.call(self, data, options, function(err, result){
         if(err && err.message === 'STOP'){
