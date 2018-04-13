@@ -1,5 +1,9 @@
+var logger = require('oe-logger');
+var log = logger('audit-field-mixin');
+log.info('audit-field-mixin Loaded');
+
 module.exports = function AuditFieldsMixin(Model) {
-  console.log('attaching audit-field-mixin ->', Model.modelName)
+  
   if (Model.definition.name === 'BaseEntity') {
     return;
   }
