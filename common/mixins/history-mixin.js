@@ -31,6 +31,9 @@ var loopback = require('loopback');
 
 var logger = require('oe-logger');
 var log = logger('history-mixin');
+log.info('history-mixin Loaded');
+
+
 
 module.exports = function HistoryMixin(Model) {
   console.log('history mixing being attached to %s model', Model.modelName)
