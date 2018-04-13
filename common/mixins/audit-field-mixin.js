@@ -28,6 +28,7 @@ module.exports = function AuditFieldsMixin(Model) {
   Model.defineProperty('_modifiedOn', {
     type: 'timestamp'
   });
+  log.debug(log.defaultContext(), 'Attach audit-field-mixin to ', Model.definition.name);
 
   if ((Model.settings.overridingMixins && !Model.settings.overridingMixins.AuditFieldsMixin) || !Model.settings.mixins.AuditFieldsMixin) {
     Model.observe('before save', injectAuditFields);
