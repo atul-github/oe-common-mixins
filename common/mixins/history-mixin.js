@@ -36,8 +36,6 @@ log.info('history-mixin Loaded');
 
 
 module.exports = function HistoryMixin(Model) {
-  console.log('history mixing being attached to %s model', Model.modelName)
-
   // Skip this mixin where ever not applicable.
   if (skipThisMixinIfNotApplicable(Model)) {
     return;
