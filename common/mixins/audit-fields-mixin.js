@@ -1,9 +1,15 @@
+/**
+ *
+ * 2018-2019 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ * Bangalore, India. All Rights Reserved.
+ *
+ */
+
 var logger = require('oe-logger');
 var log = logger('audit-field-mixin');
 log.info('audit-field-mixin Loaded');
 
 module.exports = function AuditFieldsMixin(Model) {
-  
   if (Model.definition.name === 'BaseEntity') {
     return;
   }

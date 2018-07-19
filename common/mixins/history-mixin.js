@@ -34,7 +34,6 @@ var log = logger('history-mixin');
 log.info('history-mixin Loaded');
 
 
-
 module.exports = function HistoryMixin(Model) {
   // Skip this mixin where ever not applicable.
   if (skipThisMixinIfNotApplicable(Model)) {
@@ -58,14 +57,14 @@ module.exports = function HistoryMixin(Model) {
 
 /**
  * Checks if mixin needs to be skipped or not. Mixin is skipped for BaseEntity,
- * CacheManager.
+ * 
  *
  * @param {object}Model - Model Constructor
  * @returns {Boolean} - true is model is BaseEntity else false
  * @memberof History Mixin
  */
 function skipThisMixinIfNotApplicable(Model) {
-  if (Model.definition.name === 'BaseEntity' || Model.definition.name === 'CacheManager') {
+  if (Model.definition.name === 'BaseEntity') {
     Model.definition.settings.HistoryMixin = true;
     log.debug(log.defaultContext(), 'skipping mixin for - ', Model.definition.name);
     return true;
@@ -162,8 +161,6 @@ function createHistoryModel(model) {
       }
     }
   }
-
-  var dataSourceGroup = model.definition.settings.dataSourceGroup;
 
   // Create a new Model in loopback.
   var newModel = loopback.createModel(auditModelName, properties, {

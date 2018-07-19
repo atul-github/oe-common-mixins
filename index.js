@@ -1,10 +1,13 @@
-var app = require('oe-cloud');
-app.observe('loaded', function(ctx, next){
-  app.addSettingsToModelDefinition({properties : {HistoryMixin : {type : "boolean"}}});
-  app.addSettingsToModelDefinition({properties : {_versioning : {type : "boolean", default : false}}});
-  return next();
-})
+/**
+ *
+ * 2018-2019 EdgeVerve Systems Limited (a fully owned Infosys subsidiary),
+ * Bangalore, India. All Rights Reserved.
+ *
+ */
 
-module.exports = function(){
-  
-}
+// Author : Atul
+var wrapper = require('./lib/wrapper.js');
+module.exports = function (app) {
+  wrapper(app);
+};
+
