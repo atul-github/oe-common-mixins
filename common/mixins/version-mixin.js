@@ -63,9 +63,7 @@ module.exports = function VersionMixin(Model) {
     delete ctx.data._newVersion;
     return next();
   });
-
-
-  Model.remoteMethod('deleteById', {
+  Model.remoteMethod('deleteWithVersion', {
     http: {
       path: '/:id/:version',
       verb: 'delete'
@@ -85,6 +83,9 @@ module.exports = function VersionMixin(Model) {
       http: {
         source: 'path'
       }
+    },
+    {
+      arg: 'options', type: 'object', http: 'optionsFromRequest'
     }],
     returns: {
       arg: 'response',
@@ -92,6 +93,13 @@ module.exports = function VersionMixin(Model) {
       root: true
     }
   });
+
+  if (Model.sharedClass && Model.sharedClass.findMethodByName) {
+    var remoteMethodOld = Model.sharedClass.findMethodByName('deleteById');
+    var remoteMethodNew = Model.sharedClass.findMethodByName('deleteWithVersion');
+    remoteMethodOld.accepts = remoteMethodNew.accepts;
+    remoteMethodOld.http = remoteMethodNew.http;
+  }
 
 
   Model.evObserve('before save', function (ctx, next) {
