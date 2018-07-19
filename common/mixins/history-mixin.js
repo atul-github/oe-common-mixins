@@ -57,7 +57,7 @@ module.exports = function HistoryMixin(Model) {
 
 /**
  * Checks if mixin needs to be skipped or not. Mixin is skipped for BaseEntity,
- * 
+ *
  *
  * @param {object}Model - Model Constructor
  * @returns {Boolean} - true is model is BaseEntity else false
