@@ -5,8 +5,9 @@
  *
  */
 
-var logger = require('oe-logger');
-var log = logger('audit-field-mixin');
+// Author : Atul
+const logger = require('oe-logger');
+const log = logger('audit-field-mixin');
 const loopback = require('loopback');
 log.info('audit-field-mixin Loaded');
 
@@ -33,7 +34,7 @@ module.exports = function AuditFieldsMixin(Model) {
       }
 
       var userModel = loopback.getModelByType('User');
-      userModel.findOne({id: instance.userId}, ctx.options, function (err, result) {
+      userModel.findOne({ where: {id: instance.userId }}, ctx.options, function (err, result) {
         if (err) {
           return next(err);
         }

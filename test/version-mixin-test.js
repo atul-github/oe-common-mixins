@@ -68,7 +68,7 @@ var globalCtx = {
   ctx: { tenantId: '/default' }
 };
 
-describe(chalk.blue('Common Mixins Test Started'), function (done) {
+describe(chalk.blue('Version Mixin Test Started'), function (done) {
   this.timeout(10000);
   before('wait for boot scripts to complete', function (done) {
     //app.on('test-start', function () {

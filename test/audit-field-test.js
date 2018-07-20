@@ -49,7 +49,7 @@ var globalCtx = {
   ignoreAutoScope: true,
   ctx: { tenantId: '/default' }
 };
-describe(chalk.blue('Common Mixins Test Started'), function (done) {
+describe(chalk.blue('Audit Field Mixin Test Started'), function (done) {
   this.timeout(15000);
   before('wait for boot scripts to complete', function (done) {
     Customer = loopback.findModel("Customer");
@@ -129,7 +129,6 @@ describe(chalk.blue('Common Mixins Test Started'), function (done) {
       .send({name : "Atul" , age : 30})
       .end(function (err, response) {
         var result = response.body;
-console.log(result);
         expect(response.status).to.be.equal(200);
         expect(result._createdBy).to.be.equal("admin");
         expect(result._modifiedBy).to.be.equal("admin");
