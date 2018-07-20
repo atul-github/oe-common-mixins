@@ -47,7 +47,7 @@ module.exports = function VersionMixin(Model) {
     type: String
   });
 
-  Model.settings._versioning = true;
+  // Model.settings._versioning = true;
   // Model.settings.updateOnLoad = true;
 
   Model.evObserve('after save', function afterSaveVersionMixin(ctx, next) {

@@ -7,24 +7,59 @@
 
 var logger = require('oe-logger');
 var log = logger('audit-field-mixin');
+const loopback = require('loopback');
 log.info('audit-field-mixin Loaded');
 
 module.exports = function AuditFieldsMixin(Model) {
   if (Model.definition.name === 'BaseEntity') {
+    var accessTokenModel = loopback.getModelByType('AccessToken');
+    Model.defineProperty('username', {
+      type: String,
+      length: 200
+    });
+    Model.defineProperty('email', {
+      type: String,
+      length: 200
+    });
+    accessTokenModel.observe('before save', function (ctx, next) {
+      if (!ctx.isNewInstance) {
+        log.warn(log.defaultContext(), 'Hook exececutes only for new instance of AccessToken');
+        return next();
+      }
+      var instance = ctx.instance;
+      if (!instance) {
+        log.warn(log.defaultContext(), 'No instance found');
+        return next();
+      }
+
+      var userModel = loopback.getModelByType('User');
+      userModel.findOne(instance.userId, ctx.options, function (err, result) {
+        if (err) {
+          return next(err);
+        }
+
+        if (!result) {
+          return next(new Error('User Data not found for user Id ', instance.userId));
+        }
+        instance.username = result.username;
+        instance.email = result.email;
+        return next();
+      });
+    });
     return;
   }
 
   Model.defineProperty('_type', {
     type: String,
-    length: 50
+    length: 200
   });
   Model.defineProperty('_createdBy', {
     type: String,
-    length: 50
+    length: 200
   });
   Model.defineProperty('_modifiedBy', {
     type: String,
-    length: 50
+    length: 200
   });
 
   Model.defineProperty('_createdOn', {
@@ -60,8 +95,11 @@ function injectAuditFields(ctx, next) {
   var context = ctx.options;
   var cctx = context.ctx || {};
 
-  var remoteUser = cctx.remoteUser || 'system';
-
+  var remoteUser = cctx.remoteUser;
+  if (!remoteUser && (ctx.options && ctx.options.accessToken && ctx.options.accessToken.username)) {
+    remoteUser = ctx.options.accessToken.username;
+  }
+  remoteUser = remoteUser || 'system';
   var currentDateTime = new Date();
 
   var protectedFields = ['_type', '_createdBy', '_modifiedBy', '_createdOn', '_modifiedOn'];

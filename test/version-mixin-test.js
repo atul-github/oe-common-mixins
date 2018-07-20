@@ -8,6 +8,9 @@
 // Author : Atul
 var oecloud = require('oe-cloud');
 var loopback = require('loopback');
+var bootstrap = require('./bootstrap');
+/*var oecloud = require('oe-cloud');
+var loopback = require('loopback');
 
 oecloud.observe('loaded', function (ctx, next) {
   oecloud.attachMixinsToBaseEntity("VersionMixin");
@@ -23,7 +26,7 @@ oecloud.boot(__dirname, function (err) {
   oecloud.start();
   oecloud.emit('test-start');
 });
-
+*/
 
 var chalk = require('chalk');
 var chai = require('chai');
@@ -68,12 +71,12 @@ var globalCtx = {
 describe(chalk.blue('Common Mixins Test Started'), function (done) {
   this.timeout(10000);
   before('wait for boot scripts to complete', function (done) {
-    app.on('test-start', function () {
+    //app.on('test-start', function () {
       Customer = loopback.findModel("Customer");
       deleteAllUsers(function () {
         return done();
       });
-    });
+    //});
   });
 
   afterEach('destroy context', function (done) {

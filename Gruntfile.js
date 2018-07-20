@@ -53,7 +53,7 @@ module.exports = function GruntConfig(grunt) {
 
     mocha_istanbul: {
       coverage: {
-        src: 'test/test.js',
+        src: ['test/version-mixin-test.js', 'test/audit-mixin-test.js'],
         options: {
           timeout: 60000,
           check: {
