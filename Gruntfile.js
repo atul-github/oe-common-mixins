@@ -53,14 +53,14 @@ module.exports = function GruntConfig(grunt) {
 
     mocha_istanbul: {
       coverage: {
-        src: ['test/version-mixin-test.js', 'test/audit-mixin-test.js'],
+        src: ['test/version-mixin-test.js', 'test/audit-field-test.js'],
         options: {
           timeout: 60000,
           check: {
-            lines: 20,
-            statements: 20,
-            branches: 20,
-            functions: 10
+            lines: 80,
+            statements: 80,
+            branches: 60,
+            functions: 80
           },
           reportFormats: ['lcov']
         }

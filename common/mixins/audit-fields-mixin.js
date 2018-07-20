@@ -13,11 +13,11 @@ log.info('audit-field-mixin Loaded');
 module.exports = function AuditFieldsMixin(Model) {
   if (Model.definition.name === 'BaseEntity') {
     var accessTokenModel = loopback.getModelByType('AccessToken');
-    Model.defineProperty('username', {
+    accessTokenModel.defineProperty('username', {
       type: String,
       length: 200
     });
-    Model.defineProperty('email', {
+    accessTokenModel.defineProperty('email', {
       type: String,
       length: 200
     });
@@ -33,11 +33,10 @@ module.exports = function AuditFieldsMixin(Model) {
       }
 
       var userModel = loopback.getModelByType('User');
-      userModel.findOne(instance.userId, ctx.options, function (err, result) {
+      userModel.findOne({id: instance.userId}, ctx.options, function (err, result) {
         if (err) {
           return next(err);
         }
-
         if (!result) {
           return next(new Error('User Data not found for user Id ', instance.userId));
         }
