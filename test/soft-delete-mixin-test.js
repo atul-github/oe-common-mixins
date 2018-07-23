@@ -42,7 +42,6 @@ var supertest = require('supertest');
 var Customer;
 var api = defaults(supertest(app));
 var basePath = app.get('restApiRoot');
-var url = basePath + '/Employees';
 
 var models = oecloud.models;
 
@@ -71,7 +70,7 @@ var globalCtx = {
 
 
 
-describe(chalk.blue('Version Mixin Test Started'), function () {
+describe(chalk.blue('Soft Delete Mixin Test Started'), function () {
   this.timeout(10000);
 
   var testDatasourceName = uuidv4();
@@ -91,7 +90,6 @@ describe(chalk.blue('Version Mixin Test Started'), function () {
 
 
   before('wait for boot scripts to complete', function (done) {
-    debugger;
     models.ModelDefinition.create(TestModelSchema, globalCtx, function (err, res) {
       if (err) {
         debug('unable to create VersionMixinTest model');
@@ -107,12 +105,12 @@ describe(chalk.blue('Version Mixin Test Started'), function () {
     done();
   });
 
-  it('Should insert data to the TestModel and see if _isDelete is present and set to false ', function (done) {
+  it('t1 - (oecloud 1.x test) Should insert data to the TestModel and see if _isDelete is present and set to false ', function (done) {
     var postData = {
       'name': 'TestCaseOne',
       '_version': uuidv4()
     };
-    models[modelName].create(postData, bootstrap.defaultContext, function (err, res) {
+    models[modelName].create(postData, globalCtx, function (err, res) {
       if (err) {
         done(err);
       } else {
@@ -123,5 +121,47 @@ describe(chalk.blue('Version Mixin Test Started'), function () {
     });
   });
 
+  it('t2 - (oecloud 1.x test) Should delete record from TestModel using destroyById and find the same record ,should not return the record ', function (done) {
+    var postData = {
+      'name': 'TestCaseTwo',
+      '_version': uuidv4()
+    };
+    models[modelName].create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        models[modelName].destroyById(res.id, res._version, globalCtx, function (err) {
+          if (err) {
+            done(err);
+          } else {
+            models[modelName].findById(res.id, globalCtx, function (err, record) {
+              if (err) {
+                done(err);
+              } else {
+                expect(record).to.be.null;
+                done();
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+  it('t3 - (oecloud 1.x test) Should delete record from TestModel using destroyAll, on find nothing should be return ', function (done) {
+    models[modelName].destroyAll({}, globalCtx, function (err) {
+      if (err) {
+        done(err);
+      } else {
+        models[modelName].find({}, globalCtx, function (err, record) {
+          if (err) {
+            done(err);
+          } else {
+            expect(record).to.be.empty;
+            done();
+          }
+        });
+      }
+    });
+  });
 
 });
