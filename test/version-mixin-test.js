@@ -118,11 +118,11 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   });
 
   it('t3-1 clean up Customer models', function (done) {
-    Customer.destroyAll({}, {}, function (err) {
+    Customer.destroyAll({}, { notify: false}, function (err) {
       if (err)
         return done(err);
       var CustomerAddress = loopback.getModel('CustomerAddress', globalCtx);
-      CustomerAddress.destroyAll({}, {}, function (err) {
+      CustomerAddress.destroyAll({}, { notify: false}, function (err) {
         return done(err);
       });
     });
@@ -347,12 +347,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
         'type': 'string',
       }
     },
-    plural: modelName,
-    mixins: {
-      SoftDeleteMixin: false,
-      IdempotentMixin: false,
-      VersionMixin: true
-    }
+    plural: modelName
   };
 
   it('t8-1 (oe 1.x test cases) should create a new record with version number', function (done) {

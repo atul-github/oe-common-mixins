@@ -49,7 +49,7 @@ var models = oecloud.models;
 
 function deleteAllUsers(done) {
   var userModel = loopback.findModel("User");
-  userModel.destroyAll({}, {}, function (err) {
+  userModel.destroyAll({}, { notify: false }, function (err) {
     if (err) {
       return done(err);
     }
@@ -84,10 +84,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
       }
     },
     strict: false,
-    plural: modelName,
-    mixins: {
-      VersionMixin: true
-    }
+    plural: modelName
   };
 
 

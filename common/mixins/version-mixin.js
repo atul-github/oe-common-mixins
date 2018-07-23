@@ -101,6 +101,10 @@ module.exports = function VersionMixin(Model) {
 
   Model.evObserve('before save', function (ctx, next) {
     var data = ctx.data || ctx.instance;
+    if (ctx.currentInstance && ctx.data && ctx.data._isDeleted) {
+      data._version = uuidv4();
+      return next();
+    }
     if (ctx.isNewInstance) {
       data._version = data._newVersion || data._version || uuidv4();
       delete data._oldVersion;

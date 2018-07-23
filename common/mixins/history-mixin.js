@@ -45,7 +45,7 @@ module.exports = function HistoryMixin(Model) {
 
   // Disable updateAll as we will not allow bulk updates. Only updates on id
   // is allowed.
-  Model.disableRemoteMethod('updateAll', true);
+  Model.disableRemoteMethodByName('updateAll', true);
 
   // Create history model when the model is added to the loopback application.
   Model.on('attached', function historyMixinAttached() {

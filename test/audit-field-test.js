@@ -97,18 +97,18 @@ describe(chalk.blue('Audit Field Mixin Test Started'), function (done) {
   });
 
   it('t3-1 clean up Customer models', function (done) {
-    Customer.destroyAll({}, {}, function (err) {
+    Customer.destroyAll({}, {notify : false}, function (err, results) {
+      console.log(results);
       if (err)
         return done(err);
       var CustomerAddress = loopback.getModel('CustomerAddress', globalCtx);
-      CustomerAddress.destroyAll({}, {}, function (err) {
+      CustomerAddress.destroyAll({}, { notify: false}, function (err) {
         return done(err);
       });
     });
   });
 
   it('t3-2 create records in Customer models', function (done) {
-    debugger;
     Customer.create([{name: "Smith", age: 30, id: 1 }, {name: "Atul", age: 30, id: 2 }, {name: "John", age: 30, id: 3 }], globalCtx, function (err, r) {
       if (err) {
         return done(err);
