@@ -597,15 +597,15 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
     // clearing data from VersionMixinTest model
     model.destroyAll({}, globalCtx, function (err, info) {
       if (err) {
-        console.log(err);
+        return done(err);
       } else {
-        debug('number of record deleted -> ', info.count);
+        console.log('number of record deleted -> ', info.count);
         models.ModelDefinition.destroyAll({
           "name": modelName
-        }, bootstrap.defaultContext, function (err) { });
+        }, globalCtx, function (err) { });
+        return done();
       }
     });
-    done();
   });
 });
 
