@@ -72,10 +72,10 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   this.timeout(10000);
   before('wait for boot scripts to complete', function (done) {
     //app.on('test-start', function () {
-      Customer = loopback.findModel("Customer");
-      deleteAllUsers(function () {
-        return done();
-      });
+    Customer = loopback.findModel("Customer");
+    deleteAllUsers(function () {
+      return done();
+    });
     //});
   });
 
@@ -86,35 +86,35 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   it('t1-0 create user admin/admin with /default tenant', function (done) {
     var url = basePath + '/users';
     api.set('Accept', 'application/json')
-    .post(url)
-    .send([{ username: "admin", password: "admin", email: "admin@admin.com" },
-    { username: "evuser", password: "evuser", email: "evuser@evuser.com" },
-    { username: "infyuser", password: "infyuser", email: "infyuser@infyuser.com" },
-    { username: "bpouser", password: "bpouser", email: "bpouser@bpouser.com" }
-    ])
-    .end(function (err, response) {
+      .post(url)
+      .send([{ username: "admin", password: "admin", email: "admin@admin.com" },
+      { username: "evuser", password: "evuser", email: "evuser@evuser.com" },
+      { username: "infyuser", password: "infyuser", email: "infyuser@infyuser.com" },
+      { username: "bpouser", password: "bpouser", email: "bpouser@bpouser.com" }
+      ])
+      .end(function (err, response) {
 
-      var result = response.body;
-      expect(result[0].id).to.be.defined;
-      expect(result[1].id).to.be.defined;
-      expect(result[2].id).to.be.defined;
-      expect(result[3].id).to.be.defined;
-      done();
-    });
+        var result = response.body;
+        expect(result[0].id).to.be.defined;
+        expect(result[1].id).to.be.defined;
+        expect(result[2].id).to.be.defined;
+        expect(result[3].id).to.be.defined;
+        done();
+      });
   });
 
   var adminToken;
   it('t2 Login with admin credentials', function (done) {
     var url = basePath + '/users/login';
     api.set('Accept', 'application/json')
-    .post(url)
-    .send({ username: "admin", password: "admin" })
-    .end(function (err, response) {
-      var result = response.body;
-      adminToken = result.id;
-      expect(adminToken).to.be.defined;
-      done();
-    });
+      .post(url)
+      .send({ username: "admin", password: "admin" })
+      .end(function (err, response) {
+        var result = response.body;
+        adminToken = result.id;
+        expect(adminToken).to.be.defined;
+        done();
+      });
   });
 
   it('t3-1 clean up Customer models', function (done) {
@@ -129,7 +129,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   });
 
   it('t3-2 create records in Customer models', function (done) {
-    Customer.create([{name: "Smith", age: 30, id: 1 }, {name: "Atul", age: 30, id: 2 }, {name: "John", age: 30, id: 3 }], globalCtx, function (err, r) {
+    Customer.create([{ name: "Smith", age: 30, id: 1 }, { name: "Atul", age: 30, id: 2 }, { name: "John", age: 30, id: 3 }], globalCtx, function (err, r) {
       if (err) {
         return done(err);
       }
@@ -153,7 +153,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
         if (!err) {
           return done(new Error("Expcted test case to throw error"));
         }
-        instance.updateAttributes({ name: "Changed", id: 1, age: 50, _version : "ABCDEF" }, globalCtx, function (err, r) {
+        instance.updateAttributes({ name: "Changed", id: 1, age: 50, _version: "ABCDEF" }, globalCtx, function (err, r) {
           if (err) {
             return done();
           }
@@ -230,14 +230,14 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
 
         api.set('Accept', 'application/json')
           .put(url)
-          .send({ name: "Customer AA", age: 100, id : 1 })
+          .send({ name: "Customer AA", age: 100, id: 1 })
           .end(function (err, response) {
             var result = response.body;
             expect(response.status).not.to.be.equal(200);
 
             api.set('Accept', 'application/json')
               .put(url)
-              .send({ name: "Customer AA", age: 100, id: 1, _version : "ABCDDD" })
+              .send({ name: "Customer AA", age: 100, id: 1, _version: "ABCDDD" })
               .end(function (err, response) {
                 var result = response.body;
                 expect(response.status).not.to.be.equal(200);
@@ -260,7 +260,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
         var instance = result[0];
         api.set('Accept', 'application/json')
           .put(url)
-          .send({ name: "Customer BB", age: 100, id: 1, _version : instance._version })
+          .send({ name: "Customer BB", age: 100, id: 1, _version: instance._version })
           .end(function (err, response) {
             var result = response.body;
             expect(response.status).to.be.equal(200);
@@ -323,7 +323,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
         expect(response.status).to.be.equal(200);
         expect(result.length).to.be.equal(3);
         var instance = result[0];
-        var url2 = basePath + '/customers/' + instance.id + '/' + instance._version +'?access_token=' + adminToken;
+        var url2 = basePath + '/customers/' + instance.id + '/' + instance._version + '?access_token=' + adminToken;
         api.set('Accept', 'application/json')
           .delete(url2)
           .send({})
@@ -336,6 +336,277 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
       });
   });
 
+
+  var model;
+  var modelName = 'VersionMixinTest';
+  var modelDetails = {
+    name: modelName,
+    base: 'BaseEntity',
+    properties: {
+      'name': {
+        'type': 'string',
+      }
+    },
+    plural: modelName,
+    mixins: {
+      SoftDeleteMixin: false,
+      IdempotentMixin: false,
+      VersionMixin: true
+    }
+  };
+
+  it('t8-1 (oe 1.x test cases) should create a new record with version number', function (done) {
+    models.ModelDefinition.create(modelDetails, globalCtx, function (err, res) {
+      if (err) {
+        debug('unable to create VersionMixinTest model');
+        done(err);
+      } else {
+        model = loopback.getModel(modelName, globalCtx);
+        done();
+      }
+    });
+  });
+
+
+  it('t8-2 (oe 1.x test cases) should create a new record with version number', function (done) {
+    var postData = {
+      'name': 'record1'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        expect(res._version).not.to.be.empty;
+        done();
+      }
+    });
+  });
+
+
+  it('t8-3 (oe 1.x test cases) should create and update a record  -upsert', function (done) {
+    var postData = {
+      'name': 'record2'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        res.name = 'updatedRecord2';
+        model.upsert(res, globalCtx, function (err, res1) {
+          if (err) {
+            done(err);
+          } else {
+            expect(res1._version).not.to.be.empty;
+            expect(res1.name).to.be.equal('updatedRecord2');
+            done();
+          }
+        });
+      }
+    });
+  });
+
+
+  it('t8-4 (oe 1.x test cases) should not update a record with wrong version  -upsert', function (done) {
+    // commented out as upsert and autoscope is resulting into new record
+    // I think upsert should not allow version on new record
+    // Or upsert should never insert if version is present
+    // and internally can do update
+    var postData = {
+      'name': 'record3'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        postData.name = 'updatedRecord3';
+        postData._version = 'wrongNumber';
+        postData.id = res.id;
+        model.upsert(postData, globalCtx, function (err1, res1) {
+          if (err1) {
+            expect(err1.message).not.to.be.empty;
+            done();
+          } else {
+            done(new Error('record updated with wrong version number'));
+          }
+        });
+      }
+    });
+  });
+
+  it('t8-5 (oe 1.x test cases) should not update a record without version number  -upsert', function (done) {
+    var postData = {
+      'name': 'record3'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        postData.name = 'updatedRecord3';
+        postData.id = res.id;
+        postData._version = undefined;
+        model.upsert(postData, globalCtx, function (err1, res1) {
+          if (err1) {
+            expect(err1.message).not.to.be.empty;
+            done();
+          } else {
+            done(new Error('record updated without version number'));
+          }
+        });
+      }
+    });
+  });
+
+  it('t8-6 (oe 1.x test cases) should create and update a record  -updateAttributes', function (done) {
+    var postData = {
+      'name': 'record4'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        model.findOne({
+          where: {
+            id: res.id
+          }
+        }, globalCtx, function (err1, instance) {
+          if (err1 || !instance) {
+            done(err1 || new Error('record not found'));
+          } else {
+            postData.name = 'updatedRecord4';
+            postData._version = instance._version;
+            instance.updateAttributes(postData, globalCtx, function (err2, res1) {
+              if (err2) {
+                done(err2);
+              } else {
+                expect(res1._version).not.to.be.empty;
+                expect(res1.name).to.be.equal('updatedRecord4');
+                done();
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+
+  it('t8-7 (oe 1.x test cases) should not update a record with wrong version -updateAttributes', function (done) {
+    var postData = {
+      'name': 'record5'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        model.findOne({
+          where: {
+            id: res.id
+          }
+        }, globalCtx, function (err1, instance) {
+          if (err1 || !instance) {
+            done(err1 || new Error('record not found'));
+          } else {
+            postData.name = 'updatedRecord5';
+            postData._version = 'WrongVersion';
+            postData.id = res.id;
+            instance.updateAttributes(postData, globalCtx, function (err2, res1) {
+              if (err2) {
+                expect(err2.message).not.to.be.empty;
+                done();
+              } else {
+                done(new Error('record updated with wrong version number'));
+              }
+            });
+          }
+        });
+      }
+    });
+  });
+  it('t8-8 (oe 1.x test cases) should update a record without version programitacally -updateAttributes', function (done) {
+    var postData = {
+      'name': 'record6'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        model.findOne({
+          where: {
+            id: res.id
+          }
+        }, globalCtx, function (err1, instance) {
+          if (err1 || !instance) {
+            done(err1 || new Error('record not found'));
+          } else {
+            postData.name = 'updatedRecord6';
+            instance.updateAttributes(postData, globalCtx, function (err2, res1) {
+              if (err2) {
+                return done();
+              }
+              done(new Error("Expected version error but got success code"));
+            });
+          }
+        });
+      }
+    });
+  });
+  it('t8-9 (oe 1.x test cases) should create and update a record with version - upsert 1', function (done) {
+    var postData = {
+      'name': 'record7'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        postData.name = 'updatedRecord7';
+        postData._version = res._version;
+        postData.id = res.id;
+        model.upsert(postData, globalCtx, function (err2, res1) {
+          if (err2) {
+            done(err2);
+          } else {
+            expect(res1._version).not.to.be.empty;
+            done();
+          }
+        });
+      }
+    });
+  });
+
+  it('t8-10 (oe 1.x test cases) should delete a record giving id and version number -deleteById', function (done) {
+    var postData = {
+      'name': 'record11'
+    };
+    model.create(postData, globalCtx, function (err, res) {
+      if (err) {
+        done(err);
+      } else {
+        model.deleteById(res.id, res._version, globalCtx, function (err2, res1) {
+          if (err2) {
+            done(new Error('record not deleted without version number'));
+          } else {
+            expect(res1.count).to.be.equal(1);
+            done();
+          }
+        });
+      }
+    });
+  });
+
+
+  it('t8-11 (oe 1.x test cases) clean up : database', function (done) {
+    // clearing data from VersionMixinTest model
+    model.destroyAll({}, globalCtx, function (err, info) {
+      if (err) {
+        console.log(err);
+      } else {
+        debug('number of record deleted -> ', info.count);
+        models.ModelDefinition.destroyAll({
+          "name": modelName
+        }, bootstrap.defaultContext, function (err) { });
+      }
+    });
+    done();
+  });
 });
 
 

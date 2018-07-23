@@ -9,6 +9,8 @@
 var oecloud = require('oe-cloud');
 oecloud.observe('loaded', function (ctx, next) {
   oecloud.attachMixinsToBaseEntity("VersionMixin");
+  oecloud.attachMixinsToBaseEntity("AuditFieldsMixin");
+  oecloud.attachMixinsToBaseEntity("HistoryMixin");
   return next();
 })
 

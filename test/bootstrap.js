@@ -12,6 +12,7 @@ var loopback = require('loopback');
 oecloud.observe('loaded', function (ctx, next) {
   oecloud.attachMixinsToBaseEntity("VersionMixin");
   oecloud.attachMixinsToBaseEntity("AuditFieldsMixin");
+  oecloud.attachMixinsToBaseEntity("HistoryMixin");
   return next();
 })
 

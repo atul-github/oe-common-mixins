@@ -9,13 +9,10 @@
  * property called _version and auto populate it with uuidv4() which is a
  * unique number, new version for a record is generated, when a new instance is
  * created or updated.<br><br>
- *
- * It also added check for version number on update and delete, of a record so
- * when a record/instance needs to be updated or deleted, user must provide the
- * current version of the record.
+ * It also changes signaure of deleteById Remote call to include version id
  *
  * @mixin EV Version Mixin
- * @author Sivankar Jain
+ * @author Sivankar Jain/Atul Pandit
  */
 
 const uuidv4 = require('uuid/v4');
@@ -113,6 +110,7 @@ module.exports = function VersionMixin(Model) {
     var id = oecloudutil.getIdValue(ctx.Model, data);
     var _version = data._version;
     utils.checkIfVersionMatched(ctx.Model, id, _version, function (err) {
+      data._version = data._newVersion || uuidv4();
       return next(err);
     });
   });
