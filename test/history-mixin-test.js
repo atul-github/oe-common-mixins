@@ -70,7 +70,7 @@ var globalCtx = {
   ctx: { tenantId: '/default' }
 };
 
-describe(chalk.blue('Version Mixin Test Started'), function (done) {
+describe(chalk.blue('History Mixin Test Started'), function (done) {
 
   var modelName = 'MixinTest';
   var modelDetails = {

@@ -17,7 +17,6 @@
 
 const uuidv4 = require('uuid/v4');
 const oecloudutil = require('oe-cloud/lib/common/util');
-const utils = require('../../lib/utils');
 
 module.exports = function VersionMixin(Model) {
   if (Model.modelName === 'BaseEntity') {
@@ -102,7 +101,7 @@ module.exports = function VersionMixin(Model) {
   Model.evObserve('before save', function (ctx, next) {
     var data = ctx.data || ctx.instance;
     if (ctx.currentInstance && ctx.data && ctx.data._isDeleted) {
-      data._version = uuidv4();
+      data._version = ctx.currentInstance._version;
       return next();
     }
     if (ctx.isNewInstance) {
@@ -111,11 +110,21 @@ module.exports = function VersionMixin(Model) {
       delete data._newVersion;
       return next();
     }
+    var error;
     var id = oecloudutil.getIdValue(ctx.Model, data);
     var _version = data._version;
-    utils.checkIfVersionMatched(ctx.Model, id, _version, function (err) {
-      data._version = data._newVersion || uuidv4();
-      return next(err);
-    });
+    if (!data._version) {
+      error = new Error();
+      Object.assign(error, { name: 'Data Error', message: 'Version must be defined. id ' + id + ' for model ' + Model.modelName, code: 'DATA_ERROR_071', type: 'DataModifiedError', retriable: false, status: 422 });
+      return next(error);
+    }
+    if (ctx.currentInstance) {
+      if (ctx.currentInstance._version !== ctx.data._version) {
+        error = new Error();
+        Object.assign(error, { name: 'Data Error', message: 'Version must be be same. id ' + id + ' for model ' + Model.modelName + ' Version ' + _version + ' <> ' + ctx.currentInstance._version, code: 'DATA_ERROR_071', type: 'DataModifiedError', retriable: false, status: 422 });
+        return next(error);
+      }
+    }
+    return next();
   });
 };

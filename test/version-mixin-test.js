@@ -283,6 +283,22 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
       });
   });
 
+
+  it('t7-1 New test', function (done) {
+    Customer.find({}, globalCtx, function (err, r) {
+      if (err) {
+        return done(err);
+      }
+      expect(r.length).to.be.equal(3);
+      expect(r[1]._version).not.to.be.undefined;
+
+      var instance = r[1];
+      instance.updateAttributes({name : "Atul", age : 44, id : instance.id}, globalCtx, function(err, r){
+        return done();
+      });
+    });
+  });  
+
   it('t7-1 deleting record without providing version or providing wrong version - it should fail - using HTTP REST', function (done) {
 
     var url = basePath + '/customers?access_token=' + adminToken;
@@ -314,7 +330,6 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   });
 
   it('t7-2 deleting record by providing right version - it should succeed - using HTTP REST', function (done) {
-
     var url = basePath + '/customers?access_token=' + adminToken;
     api.set('Accept', 'application/json')
       .get(url)
@@ -589,6 +604,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
 
 
   it('t8-11 (oe 1.x test cases) clean up : database', function (done) {
+    return done();
     // clearing data from VersionMixinTest model
     model.destroyAll({}, globalCtx, function (err, info) {
       if (err) {
