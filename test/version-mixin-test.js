@@ -604,7 +604,6 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
 
 
   it('t8-11 (oe 1.x test cases) clean up : database', function (done) {
-    return done();
     // clearing data from VersionMixinTest model
     model.destroyAll({}, globalCtx, function (err, info) {
       if (err) {
@@ -618,6 +617,137 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
       }
     });
   });
+
+  var async = require('async');
+
+  it('t9 - multiple updates using updateAttributes at same time should fail for all but one', function (done) {
+    var inst1, inst2, inst3, inst4;
+    Customer.find({ where: { id: 2 }}, globalCtx, function (err, results) {
+      if (err) {
+        return done(err);
+      }
+      inst1 = results[0];
+      Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+        if (err) {
+          return done(err);
+        }
+        inst2 = results[0];
+        Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+          if (err) {
+            return done(err);
+          }
+          inst3 = results[0];
+          Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+            if (err) {
+              return done(err);
+            }
+            inst4 = results[0];
+            var ary = [inst1, inst2, inst3, inst4];
+            var flags = [];
+            async.eachOf(ary, function (instance, index, cb) {
+              instance.updateAttributes({ name: "New Name via UpdateAttribute" + index.toString(), _version :  instance._version }, globalCtx, function (err, inst) {
+                if (err) {
+                  flags.push(false);
+                }
+                else
+                  flags.push(true);
+
+                return cb();
+              });
+
+            }, function (err) {
+              var cnt = 0;
+              for (var i = 0; i < flags.length; ++i) {
+                if (flags[i]) {
+                  ++cnt;
+                }
+              }
+              if (cnt != 1) {
+                return done(new Error("Update of More than one instance was successful which should not have happened."));
+              }
+              return done(err);
+            });
+          });
+        });
+      });
+    });
+
+  });
+
+  it('t10 - multiple updates using replaceById at same time should fail for all but one', function (done) {
+    var inst1, inst2, inst3, inst4;
+    Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+      if (err) {
+        return done(err);
+      }
+      inst1 = results[0];
+      var version = inst1._version;
+
+      var ary = [1, 2, 3, 4];
+
+      var flags = [];
+      async.eachOf(ary, function (instance, index, cb) {
+        Customer.replaceById(2, { name: "New Name via replaceById" + index.toString(), _version: version }, globalCtx, function (err, inst) {
+          if (err) {
+            flags.push(false);
+          }
+          else
+            flags.push(true);
+
+          return cb();
+        });
+      }, function (err) {
+        var cnt = 0;
+        for (var i = 0; i < flags.length; ++i) {
+          if (flags[i]) {
+            ++cnt;
+          }
+        }
+        if (cnt != 1) {
+          return done(new Error("Update of More than one instance was successful which should not have happened."));
+        }
+        return done(err);
+      });
+    });
+  });
+
+  it('t11 - multiple updates using upsert at same time should fail for all but one', function (done) {
+    var inst1, inst2, inst3, inst4;
+    Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+      if (err) {
+        return done(err);
+      }
+      inst1 = results[0];
+      var version = inst1._version;
+
+      var ary = [1, 2, 3, 4];
+
+      var flags = [];
+      async.eachOf(ary, function (instance, index, cb) {
+        Customer.upsert({ id : 2, name: "New Name via upsert" + index.toString(), _version: version }, globalCtx, function (err, inst) {
+          if (err) {
+            flags.push(false);
+          }
+          else
+            flags.push(true);
+
+          return cb();
+        });
+      }, function (err) {
+        var cnt = 0;
+        for (var i = 0; i < flags.length; ++i) {
+          if (flags[i]) {
+            ++cnt;
+          }
+        }
+        if (cnt != 1) {
+          return done(new Error("Update of More than one instance was successful which should not have happened."));
+        }
+        return done(err);
+      });
+    });
+  });
+
 });
 
 
