@@ -41,5 +41,13 @@
   "CustomerAddress": {
     "dataSource": "db",
     "public": true
+  },
+  "Employee": {
+    "dataSource": "db",
+    "public": true
+  },
+  "Person": {
+    "dataSource": "db",
+    "public": true
   }
 }

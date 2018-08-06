@@ -97,7 +97,9 @@ describe(chalk.blue('Audit Field Mixin Test Started'), function (done) {
   });
 
   it('t3-1 clean up Customer models', function (done) {
-    Customer.destroyAll({}, {notify : false}, function (err, results) {
+    Customer.settings.mixins.SoftDeleteMixin = false;
+    Customer.destroyAll({}, { notify: false }, function (err, results) {
+      Customer.settings.mixins.SoftDeleteMixin = true;
       console.log(results);
       if (err)
         return done(err);

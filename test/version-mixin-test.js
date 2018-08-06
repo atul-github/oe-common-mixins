@@ -58,8 +58,8 @@ function deleteAllUsers(done) {
       if (r2 && r2.length > 0) {
         return done(new Error("Error : users were not deleted"));
       }
+      return done();
     });
-    return done(err);
   });
 }
 
@@ -118,13 +118,8 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   });
 
   it('t3-1 clean up Customer models', function (done) {
-    Customer.destroyAll({}, { notify: false}, function (err) {
-      if (err)
-        return done(err);
-      var CustomerAddress = loopback.getModel('CustomerAddress', globalCtx);
-      CustomerAddress.destroyAll({}, { notify: false}, function (err) {
-        return done(err);
-      });
+    Customer.destroyAll({}, { notify: false }, function (err) {
+      return done(err);
     });
   });
 
@@ -330,6 +325,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   });
 
   it('t7-2 deleting record by providing right version - it should succeed - using HTTP REST', function (done) {
+    debugger;
     var url = basePath + '/customers?access_token=' + adminToken;
     api.set('Accept', 'application/json')
       .get(url)
@@ -609,7 +605,6 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
       if (err) {
         return done(err);
       } else {
-        console.log('number of record deleted -> ', info.count);
         models.ModelDefinition.destroyAll({
           "name": modelName
         }, globalCtx, function (err) { });
@@ -619,25 +614,38 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   });
 
   var async = require('async');
+  var Person;
+  it('t9-0 create records in Person models', function (done) {
+    Person = loopback.findModel("Person");
+    Person.create([{ name: "Person Smith", age: 30, id: 1 }, { name: "Person Atul", age: 30, id: 2 }, { name: "Person John", age: 30, id: 3 }], globalCtx, function (err, r) {
+      if (err) {
+        return done(err);
+      }
+      expect(r.length).to.be.equal(3);
+      expect(r[0]._version).not.to.be.undefined;
+      return done();
+    });
+  });
+
 
   it('t9 - multiple updates using updateAttributes at same time should fail for all but one', function (done) {
     var inst1, inst2, inst3, inst4;
-    Customer.find({ where: { id: 2 }}, globalCtx, function (err, results) {
+    Person.find({ where: { id: 2 }}, globalCtx, function (err, results) {
       if (err) {
         return done(err);
       }
       inst1 = results[0];
-      Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+      Person.find({ where: { id: 2 } }, globalCtx, function (err, results) {
         if (err) {
           return done(err);
         }
         inst2 = results[0];
-        Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+        Person.find({ where: { id: 2 } }, globalCtx, function (err, results) {
           if (err) {
             return done(err);
           }
           inst3 = results[0];
-          Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+          Person.find({ where: { id: 2 } }, globalCtx, function (err, results) {
             if (err) {
               return done(err);
             }
@@ -676,7 +684,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
 
   it('t10 - multiple updates using replaceById at same time should fail for all but one', function (done) {
     var inst1, inst2, inst3, inst4;
-    Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+    Person.find({ where: { id: 2 } }, globalCtx, function (err, results) {
       if (err) {
         return done(err);
       }
@@ -687,7 +695,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
 
       var flags = [];
       async.eachOf(ary, function (instance, index, cb) {
-        Customer.replaceById(2, { name: "New Name via replaceById" + index.toString(), _version: version }, globalCtx, function (err, inst) {
+        Person.replaceById(2, { name: "New Name via replaceById" + index.toString(), _version: version }, globalCtx, function (err, inst) {
           if (err) {
             flags.push(false);
           }
@@ -713,7 +721,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
 
   it('t11 - multiple updates using upsert at same time should fail for all but one', function (done) {
     var inst1, inst2, inst3, inst4;
-    Customer.find({ where: { id: 2 } }, globalCtx, function (err, results) {
+    Person.find({ where: { id: 2 } }, globalCtx, function (err, results) {
       if (err) {
         return done(err);
       }
@@ -724,7 +732,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
 
       var flags = [];
       async.eachOf(ary, function (instance, index, cb) {
-        Customer.upsert({ id : 2, name: "New Name via upsert" + index.toString(), _version: version }, globalCtx, function (err, inst) {
+        Person.upsert({ id : 2, name: "New Name via upsert" + index.toString(), _version: version }, globalCtx, function (err, inst) {
           if (err) {
             flags.push(false);
           }

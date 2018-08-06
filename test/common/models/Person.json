@@ -1,0 +1,24 @@
+{
+  "name": "Person",
+  "base": "BaseEntity",
+  "idInjection": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "unique": true
+    },
+    "age": {
+      "type": "number"
+    }
+  },
+  "mixins": {
+    "SoftDeleteMixin": false,
+    "VersionMixin": true
+  },
+  "validations": [],
+  "acls": [],
+  "relations": {},
+  "methods": {}
+
+}
+

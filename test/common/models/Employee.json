@@ -1,0 +1,24 @@
+{
+  "name": "Employee",
+  "base": "BaseEntity",
+  "idInjection": true,
+  "properties": {
+    "name": {
+      "type": "string",
+      "unique": true
+    },
+    "age": {
+      "type": "number"
+    }
+  },
+  "mixins": {
+    "VersionMixin": false,
+    "SoftDeleteMixin": true
+  },
+  "validations": [],
+  "acls": [],
+  "relations": {},
+  "methods": {}
+
+}
+
