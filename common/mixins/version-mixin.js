@@ -27,11 +27,10 @@ module.exports = function VersionMixin(Model) {
     type: String
   });
 
+  // Atul : in oeCloud.io 1.x - _version was unique index
   Model.defineProperty('_version', {
     type: String,
-    index: {
-      unique: true
-    },
+    index: true,
     required: true
   });
 
