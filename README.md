@@ -1,5 +1,31 @@
 # oe-common-mixins
 
+- [Introduction](#introduction)
+  * [dependency](#dependency)
+  * [Getting Started](#getting-started)
+    + [Testing and Code coverage](#testing-and-code-coverage)
+    + [Installation](#installation)
+- [Audit Field Mixin](#audit-field-mixin)
+  * [Using AuditFieldMixin](#using-auditfieldmixin)
+    + [Loading Mixin using model-config.json](#loading-mixin-using-model-configjson)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically)
+- [Version Mixin](#version-mixin)
+  * [Using VersionMixin](#using-versionmixin)
+    + [Loading VersionMixin using model-config.json](#loading-versionmixin-using-model-configjson)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-1)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically-1)
+  * [Developer Considerations](#developer-considerations)
+- [Soft Delete Mixin](#soft-delete-mixin)
+  * [Using SoftDeleteMixin](#using-softdeletemixin)
+  * [Developer Considerations](#developer-considerations-1)
+    + [Loading Mixin using model-config.json](#loading-mixin-using-model-configjson-1)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-2)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically-2)
+  * [Developer Considerations](#developer-considerations-2)
+   
+# oe-common-mixins
+
 # Introduction
 
 
@@ -215,6 +241,11 @@ Please refer to above section for *AuditFieldMixin**
 
 Please refer to above section for *AuditFieldMixin** 
 
+## Developer Considerations
+
+Version mixin ensures that _version value is given for any update and delete operation. It has changes deleteById http end point by adding version field to it. Therefore, http end point to delete a record would be
+
+
 
 # Soft Delete Mixin
 
@@ -222,9 +253,16 @@ In typical Enterprise application, data never gets deleted. Data always invalida
 
 When application retrieves records using model.find() method, this mixin adds filter _isDeleted = false to ensure that deleted records are never fetched.
 
+## Using SoftDeleteMixin
+
 **SoftDeleteMixin** adds following field to the Model schema
 
 _isDeleted : Default value of this field (or property) is false. When application deletes the record, this value is set to true
+
+
+## Developer Considerations
+
+
 
 
 
@@ -240,6 +278,9 @@ Please refer to above section for *AuditFieldMixin**
 ### Loading Mixin pragmatically
 
 Please refer to above section for *AuditFieldMixin** 
+
+
+## Developer Considerations
 
 
 
