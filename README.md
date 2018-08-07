@@ -1,8 +1,30 @@
 # oe-common-mixins
 
+- [Introduction](#introduction)
+  * [dependency](#dependency)
+  * [Getting Started](#getting-started)
+    + [Testing and Code coverage](#testing-and-code-coverage)
+    + [Installation](#installation)
+- [Audit Field Mixin](#audit-field-mixin)
+  * [Using AuditFieldMixin](#using-auditfieldmixin)
+    + [Loading Mixin using model-config.json](#loading-mixin-using-model-configjson)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically)
+  * [Developer Considerations](#developer-considerations)
+- [Version Mixin](#version-mixin)
+  * [Using VersionMixin](#using-versionmixin)
+    + [Loading VersionMixin using model-config.json](#loading-versionmixin-using-model-configjson)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-1)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically-1)
+  * [Developer Considerations](#developer-considerations-1)
+- [Soft Delete Mixin](#soft-delete-mixin)
+  * [Using SoftDeleteMixin](#using-softdeletemixin)
+    + [Loading Mixin using model-config.json](#loading-mixin-using-model-configjson-1)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-2)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically-2)
+  * [Developer Considerations](#developer-considerations-2)
+
 # Introduction
-
-
 
 oeCloud mixin is functionality which can be declaratively attached to Model as **mixins** property. This module implements most commonly used functionalities which can be attached to models. These functionalities are 
 
@@ -170,6 +192,11 @@ oecloud.observe('loaded', function (ctx, next) {
 })
 ```
 
+## Developer Considerations
+
+* AuditFieldMixin operates on context information of remoteUser. For http request, this information is populated in context based on AccessToken. If this information is not available, then remote user will be set to **system**. 
+* When call is made from JavaScript code, you either have to pass remoteUser in context or this mixin will set **createdBy** and **updatedBy** to **system**
+
 
 # Version Mixin
 
@@ -215,6 +242,26 @@ Please refer to above section for *AuditFieldMixin**
 
 Please refer to above section for *AuditFieldMixin** 
 
+## Developer Considerations
+
+* Version mixin ensures that _version value is given for any update and delete operation. It has changes deleteById http end point by adding version field to it. Therefore, http end point to delete a record would be
+
+```
+  DELETE http://localhost:3000/api/customers/<id>/<version>
+```
+
+This way, when you call model.destroyById, you will have to call .destroyById method by passing version
+
+```javascript
+model.destroyById(<id>, <version>, options, function(err, result){
+  // see results here
+});
+```
+
+This can be confusing because for some models you will pass version while deleting and for some models, you will not pass as VersionMixin was not enabled for those models.
+
+* If programmer calls updateAll method in javascript, version checking would not be possible as multiple records are getting updated. For such models where version mixin is enabled, you should disable updateAll method. If it is not disabled or it is somehow gets called, concurrent update of same records could be possible.
+
 
 # Soft Delete Mixin
 
@@ -222,10 +269,11 @@ In typical Enterprise application, data never gets deleted. Data always invalida
 
 When application retrieves records using model.find() method, this mixin adds filter _isDeleted = false to ensure that deleted records are never fetched.
 
+## Using SoftDeleteMixin
+
 **SoftDeleteMixin** adds following field to the Model schema
 
 _isDeleted : Default value of this field (or property) is false. When application deletes the record, this value is set to true
-
 
 
 ### Loading Mixin using model-config.json
@@ -240,6 +288,24 @@ Please refer to above section for *AuditFieldMixin**
 ### Loading Mixin pragmatically
 
 Please refer to above section for *AuditFieldMixin** 
+
+## Developer Considerations
+
+* Soft Delete feature works properly when you are deleting single instance. It wraps **destroyAll** method of connector and then calls **update** method of connector and thus prevent default behavior of deleting records.
+* This technique can cause unwanted behavior. For example, if programmer wants to handle observer hook of connector (see below code snippet), data received in context would not be appropriate.
+
+```javascript
+Model.destroyById(id, options, function(err, result){
+  // get results of delete operation
+});
+
+connector.observe("execute", function(ctx, next){
+  // ctx.req,sql - you will find "update" query when you were expecting "delete"
+  return next();
+})
+```
+
+* Soft Delete Mixin with Version mixin is also tricky. When you are deleting more than one record at time (using model.destroyAll()), it gets converted into "update" method. For all the records, this module will set _isDeleted=true and version value of all those updated records will be same.
 
 
 
