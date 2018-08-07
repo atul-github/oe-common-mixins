@@ -23,6 +23,18 @@ oeCloud mixin is functionality which can be declaratively attached to Model as *
 In this section, we will see how we can use install this module in our project. To use any of mixins/functionality in project from this module, you must install this module.
 
 
+### Testing and Code coverage
+
+```sh
+$ git clone http://evgit/oec-next/oe-common-mixins.git
+$ cd oe-common-mixins
+$ npm install --no-optional
+$ npm run grunt-cover
+```
+
+you should see coverage report in coverage folder.
+
+
 ### Installation
 
 To use **AuditFieldMixin** in your project, you must include this package into your package.json as shown below. So when you do **npm install** this package(oe-common-mixins) will be made available. Please ensure the source of this package is right and updated. For now we will be using **evgit** as source. Also, please note that, to use this mixin, you project must be **oeCloud** based project.
@@ -137,9 +149,6 @@ If you want only **AuditFieldMixin** to be enabled by default, then you can have
 ...  
 ```
 
-
-
-
 ### Loading Mixin pragmatically
 
 Imagine that you are developing oe cloud node module. That has got some Model and you want only   **AuditFieldMixin** applied to your model. You don't want application developer to add app-list.json entry. In short, you don't want application developer even aware of oe-common-mixins module. In this scenario, you have responsibility to load the module. **oe-common-mixin** can be loaded programatically as shown below. Ensure that you have dependency added in your module's **package.json** file.
@@ -205,11 +214,6 @@ Please refer to above section for *AuditFieldMixin**
 ### Loading Mixin pragmatically
 
 Please refer to above section for *AuditFieldMixin** 
-
-
-
-
-
 
 
 
