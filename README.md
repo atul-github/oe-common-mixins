@@ -216,5 +216,30 @@ Please refer to above section for *AuditFieldMixin**
 Please refer to above section for *AuditFieldMixin** 
 
 
+# Soft Delete Mixin
+
+In typical Enterprise application, data never gets deleted. Data always invalidated or **soft deleted**. In oeCloud application, when you call model.deleteById or model.destroyAll, oeCloud would **hard** delete data permentantly from database. To avoid that, this mixin functionality comes into picture. If on model, if you have enabled this **SoftDeleteMixin=true**, data from that Model will never gets deleted permanently. Instead, SoftDeleteMixin would maintain a flag named **_isDeleted**. This flag is set to true for the record which is deleted. When user calls .destroyById() or .destroyAll(), this functionality ensures that records are not deleted but they are updated with _isDeleted is set to true for those records.
+
+When application retrieves records using model.find() method, this mixin adds filter _isDeleted = false to ensure that deleted records are never fetched.
+
+**SoftDeleteMixin** adds following field to the Model schema
+
+_isDeleted : Default value of this field (or property) is false. When application deletes the record, this value is set to true
+
+
+
+### Loading Mixin using model-config.json
+
+Please refer to above section for *AuditFieldMixin** 
+
+### Loading Mixin using app-list.json
+
+Please refer to above section for *AuditFieldMixin** 
+
+
+### Loading Mixin pragmatically
+
+Please refer to above section for *AuditFieldMixin** 
+
 
 
