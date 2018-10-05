@@ -58,42 +58,47 @@ module.exports = function VersionMixin(Model) {
     delete ctx.data._newVersion;
     return next();
   });
-  Model.remoteMethod('deleteWithVersion', {
-    http: {
-      path: '/:id/:version',
-      verb: 'delete'
-    },
-    description: 'Delete a model instance by id and version number, from the data source.',
-    accepts: [{
-      arg: 'id',
-      type: 'string',
-      required: true,
+
+  if (Model.sharedClass && Model.sharedClass.findMethodByName && Model.sharedClass.findMethodByName('deleteById')) {
+    Model.remoteMethod('deleteWithVersion', {
       http: {
-        source: 'path'
+        path: '/:id/:version',
+        verb: 'delete'
+      },
+      description: 'Delete a model instance by id and version number, from the data source.',
+      accepts: [{
+        arg: 'id',
+        type: 'string',
+        required: true,
+        http: {
+          source: 'path'
+        }
+      }, {
+        arg: 'version',
+        type: 'string',
+        required: true,
+        http: {
+          source: 'path'
+        }
+      },
+      {
+        arg: 'options', type: 'object', http: 'optionsFromRequest'
+      }],
+      returns: {
+        arg: 'response',
+        type: 'object',
+        root: true
       }
-    }, {
-      arg: 'version',
-      type: 'string',
-      required: true,
-      http: {
-        source: 'path'
-      }
-    },
-    {
-      arg: 'options', type: 'object', http: 'optionsFromRequest'
-    }],
-    returns: {
-      arg: 'response',
-      type: 'object',
-      root: true
-    }
-  });
+    });
+  }
 
   if (Model.sharedClass && Model.sharedClass.findMethodByName) {
     var remoteMethodOld = Model.sharedClass.findMethodByName('deleteById');
     var remoteMethodNew = Model.sharedClass.findMethodByName('deleteWithVersion');
-    remoteMethodOld.accepts = remoteMethodNew.accepts;
-    remoteMethodOld.http = remoteMethodNew.http;
+    if (remoteMethodNew && remoteMethodOld) {
+      remoteMethodOld.accepts = remoteMethodNew.accepts;
+      remoteMethodOld.http = remoteMethodNew.http;
+    }
   }
 
 
