@@ -49,5 +49,9 @@
   "Person": {
     "dataSource": "db",
     "public": true
+  },
+  "Migration": {
+    "dataSource": "db",
+    "public": true
   }
 }

@@ -1,0 +1,14 @@
+{
+  "name": "Migration",
+  "base": "BaseEntity",
+  "idinjection": true,
+  "description": "This model exposes helper API for data migration",
+  "options": {
+    "isFrameworkModel": true
+  },
+  "properties": {
+  },
+  "validations": [],
+  "relations": {},
+  "methods": {}
+}
