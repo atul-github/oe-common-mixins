@@ -32,7 +32,7 @@ module.exports = function AuditFieldsMixin(Model) {
         log.warn(log.defaultContext(), 'No instance found');
         return next();
       }
-      if(!instance.userId){
+      if (!instance.userId) {
         log.warn(log.defaultContext(), 'No instance found - user id not defined');
         return next();
       }
