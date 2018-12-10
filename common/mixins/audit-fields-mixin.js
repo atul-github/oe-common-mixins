@@ -32,6 +32,10 @@ module.exports = function AuditFieldsMixin(Model) {
         log.warn(log.defaultContext(), 'No instance found');
         return next();
       }
+      if(!instance.userId){
+        log.warn(log.defaultContext(), 'No instance found - user id not defined');
+        return next();
+      }
 
       var userModel = loopback.getModelByType('User');
       userModel.findOne({ where: {id: instance.userId }}, ctx.options, function (err, result) {
