@@ -1,7 +1,7 @@
 {
   "name": "oe-common-mixins",
-  "version": "0.0.1",
-  "description": "oe-cloud modularization project",
+  "version": "2.0.0",
+  "description": "oe-cloud modularization project aka oec-next",
   "engines": {
     "node": ">=6"
   },
@@ -14,7 +14,6 @@
     "grunt-cover": "grunt test-with-coverage"
   },
   "dependencies": {
-    "oe-cloud": "git+http://evgit/oec-next/oe-cloud.git#master"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
@@ -41,7 +40,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@evgit:atul/oe-common-mixins.git"
+    "url": "git@evgit:oec-next/oe-common-mixins.git"
   },
   "license": "MIT"
 }
