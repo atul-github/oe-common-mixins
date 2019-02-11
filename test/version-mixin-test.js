@@ -325,7 +325,6 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   });
 
   it('t7-2 deleting record by providing right version - it should succeed - using HTTP REST', function (done) {
-    debugger;
     var url = basePath + '/customers?access_token=' + adminToken;
     api.set('Accept', 'application/json')
       .get(url)
@@ -364,7 +363,7 @@ describe(chalk.blue('Version Mixin Test Started'), function (done) {
   it('t8-1 (oe 1.x test cases) should create a new record with version number', function (done) {
     models.ModelDefinition.create(modelDetails, globalCtx, function (err, res) {
       if (err) {
-        debug('unable to create VersionMixinTest model');
+        console.log('unable to create VersionMixinTest model');
         done(err);
       } else {
         model = loopback.getModel(modelName, globalCtx);

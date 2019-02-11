@@ -19,5 +19,7 @@
     "cors": false,
     "handleErrors": false
   },
+  "encryptionAlgorithm": "crypto.aes256",
+  "encryptionPassword": "SomePassword",
   "legacyExplorer": false
 }

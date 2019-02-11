@@ -31,37 +31,11 @@ oecloud.boot(__dirname, function (err) {
 
 var chalk = require('chalk');
 var chai = require('chai');
-var async = require('async');
 chai.use(require('chai-things'));
 
 var expect = chai.expect;
-
-var app = oecloud;
-var defaults = require('superagent-defaults');
-var supertest = require('supertest');
-var Customer;
-var api = defaults(supertest(app));
-var basePath = app.get('restApiRoot');
-
 var models = oecloud.models;
 
-function deleteAllUsers(done) {
-  var userModel = loopback.findModel("User");
-  userModel.destroyAll({}, { notify: false}, function (err) {
-    if (err) {
-      return done(err);
-    }
-    userModel.find({}, {}, function (err2, r2) {
-      if (err2) {
-        return done(err2);
-      }
-      if (r2 && r2.length > 0) {
-        return done(new Error("Error : users were not deleted"));
-      }
-    });
-    return done(err);
-  });
-}
 
 var globalCtx = {
   ignoreAutoScope: true,

@@ -14,6 +14,7 @@ oecloud.observe('loaded', function (ctx, next) {
   oecloud.attachMixinsToBaseEntity("AuditFieldsMixin");
   oecloud.attachMixinsToBaseEntity("HistoryMixin");
   oecloud.attachMixinsToBaseEntity("SoftDeleteMixin");
+  oecloud.attachMixinsToBaseEntity("CryptoMixin");
   
   
   return next();

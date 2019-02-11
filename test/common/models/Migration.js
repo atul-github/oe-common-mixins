@@ -14,7 +14,7 @@ module.exports = function MigrationFunction(Migration) {
     //   Migration.sharedClass.methods().forEach(function (method) {
     //     method.shared = methods.indexOf(method.name) > -1;
     //   });
-    debugger;
+    
 
        Migration.disableRemoteMethodByName('create');
        Migration.disableRemoteMethodByName('upsert');
