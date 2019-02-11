@@ -142,7 +142,7 @@ describe(chalk.blue('Crypto Mixin Test Started'), function (done) {
             }
             console.log('data2', result);
             result2 = result.rows && result.rows[0].creditcardno;
-            console.log('result2', result2);
+            //console.log('result2', result2);
             done();
           });
       });
@@ -159,7 +159,7 @@ describe(chalk.blue('Crypto Mixin Test Started'), function (done) {
             if (err2) {
               done(err2);
             } else {
-              console.log('data2', data2);
+              //console.log('data2', data2);
               result2 = data2.rows && data2.rows[0].creditcardno;
               console.log('result2', result2);
               done();
