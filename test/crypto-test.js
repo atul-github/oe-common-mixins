@@ -108,8 +108,8 @@ describe(chalk.blue('Crypto Mixin Test Started'), function (done) {
         if (err) {
           done(err);
         } else {
-          if( db && db.db && db.db("oe-common-mixins-test")){
-            db = db.db("oe-common-mixins-test");
+          if( db && db.db && db.db(dbname)){
+            db = db.db(dbname);
           }
           var collection = db.collection(modelName);
           collection.findOne({
