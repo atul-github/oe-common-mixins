@@ -23,6 +23,13 @@
     + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-2)
     + [Loading Mixin pragmatically](#loading-mixin-pragmatically-2)
   * [Developer Considerations](#developer-considerations-2)
+- [Crypto Mixin](#crypto-mixin)
+  * [Using Cryto Mixin](#using-cryto-mixin)
+    + [Loading Crypto Mixin using model-config.json](#loading-crypto-mixin-using-model-configjson)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-3)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically-3)
+  * [Configuration](#configuration)
+  * [Design](#design)
 
 # Introduction
 
