@@ -23,6 +23,13 @@
     + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-2)
     + [Loading Mixin pragmatically](#loading-mixin-pragmatically-2)
   * [Developer Considerations](#developer-considerations-2)
+- [Crypto Mixin](#crypto-mixin)
+  * [Using Cryto Mixin](#using-cryto-mixin)
+    + [Loading Crypto Mixin using model-config.json](#loading-crypto-mixin-using-model-configjson)
+    + [Loading Mixin using app-list.json](#loading-mixin-using-app-listjson-3)
+    + [Loading Mixin pragmatically](#loading-mixin-pragmatically-3)
+  * [Configuration](#configuration)
+  * [Design](#design)
 
 # Introduction
 
@@ -32,6 +39,7 @@ oeCloud mixin is functionality which can be declaratively attached to Model as *
 * Audit Field Mixin
 * Soft Delete Mixin
 * History Mixin
+* Crypto Mixin
 
 
 ## dependency
@@ -171,6 +179,8 @@ If you want only **AuditFieldMixin** to be enabled by default, then you can have
 ...  
 ```
 
+**Note** : This is ideal way of loading mixin.
+
 ### Loading Mixin pragmatically
 
 Imagine that you are developing oe cloud node module. That has got some Model and you want only   **AuditFieldMixin** applied to your model. You don't want application developer to add app-list.json entry. In short, you don't want application developer even aware of oe-common-mixins module. In this scenario, you have responsibility to load the module. **oe-common-mixin** can be loaded programatically as shown below. Ensure that you have dependency added in your module's **package.json** file.
@@ -289,6 +299,8 @@ Please refer to above section for *AuditFieldMixin**
 
 Please refer to above section for *AuditFieldMixin** 
 
+**Note** : Usually app-list.json way of loading is prefereed.
+
 ## Developer Considerations
 
 * Soft Delete feature works properly when you are deleting single instance. It wraps **destroyAll** method of connector and then calls **update** method of connector and thus prevent default behavior of deleting records.
@@ -307,5 +319,78 @@ connector.observe("execute", function(ctx, next){
 
 * Soft Delete Mixin with Version mixin is also tricky. When you are deleting more than one record at time (using model.destroyAll()), it gets converted into "update" method. For all the records, this module will set _isDeleted=true and version value of all those updated records will be same.
 
+# Crypto Mixin
+
+In cryptography, encryption is the process of encoding messages or information in such a way that only authorized parties can read it. Encryption does not prevent interception, but denies the message content to the interceptor. In an encryption scheme, the intended communication information or message, referred to as plaintext, is encrypted using an encryption algorithm, generating ciphertext that can only be read if decrypted. An authorized recipient can easily decrypt the message with the key provided by the originator to recipients, but not to unauthorized interceptors.
+
+In the oeCloud.io based application, it is possible to encrypt "data at rest". 
+With this feature, you can declare a model property to be persisted in an encrypted manner in the database. Meaning, for example, you can have model called CreditCard and you can save actual credit card number in encrypted form itself in database.
+
+
+## Using Cryto Mixin
+
+To use **Crypto Mixin** you must load this mixin into your application. Usually this happens during boot of the application. There are several ways to configure mixin paths for your application. You can do it declaratively or you can do it programatically. That is described in section below.
+
+To enable mixin on model and to enable to store data in encrypted form, you must add **encrypt** flag to true for the property for which you want to encrypt.
+This is enabled by adding a "encrypt" : true  flag to model properties while defining the model along with enabling "CryptoMixin". An example is shown below:
+
+```
+{
+    "properties": {
+      "ccno": {
+        "type": "string",
+        "encrypt": true
+      },
+      "amt": {
+        "type": "number"
+      }
+    },
+    "mixins": {
+      "CryptoMixin": true
+    },
+    "name": "BBModel",
+    "description": "BBModel",
+    "plural": "BBModels",
+ 
+  }
+
+```
+
+Upon retrieval of the data (using find / findById etc., ) the response will contain the decrypted data.
+
+
+### Loading Crypto Mixin using model-config.json
+
+Please refer to above section for *AuditFieldMixin** 
+
+### Loading Mixin using app-list.json
+
+Please refer to above section for *AuditFieldMixin** 
+
+### Loading Mixin pragmatically
+
+Please refer to above section for *AuditFieldMixin** 
+
+**Note** : Usually app-list.json way of loading is prefereed.
+
+## Configuration
+The encryption algorithm is configurable via config.json. 
+Two related config params are added to config.json: encryptionAlgorithm and encryptionPassword.
+Application level config parameters are prioritized over foundation level ones.
+Currently the following values are allowed for encryptionAlgorithm:
+* crypto.aes256
+* crypto.aes-256-ctr  (default)
+* crypto.aes-256-cbc
+* crypto.aes128
+* crypto.aes192
+
+These are defined under the "crypto" function in lib/encryption.js, hence the "crypto." prefix.
+More algorithms can be easily added to encryption.js. You just have to define one function in it and export it.
+
+## Design
+The implementation is done in common/mixin/crypto-mixin.js
+The algorithms are picked up from lib/encryption.js.
+The implementation also depends on a change done in loopback-datasource-juggler – an implementation of an “after access” hook.
+**Drawback**: Tne drawback of this implementation is that you can’t query on encrypted fields in the database. This ability may not fit your requirement.
 
 
