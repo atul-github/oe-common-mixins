@@ -15,7 +15,7 @@ var mongoHost = process.env.MONGO_HOST || 'localhost';
 var postgresHost = process.env.POSTGRES_HOST || 'localhost';
 var oracleHost = process.env.ORACLE_HOST || 'localhost';
 var oraclePort = process.env.ORACLE_PORT || 1521;
-var oracleService = process.env.ORACLE_SID || 'orclpdb.ad.infosys.com';
+var oracleService = process.env.ORACLE_SID || 'orcle.ad.infosys.com' ;// 'orclpdb.ad.infosys.com';
 var oracleUser = process.env.ORACLE_USERNAME || 'oeadmin';
 var oraclePassword = process.env.ORACLE_PASSWORD || 'oeadmin';
 
@@ -124,7 +124,7 @@ describe(chalk.blue('Crypto Mixin Test Started'), function (done) {
           });
         }
       });
-    } else if (dataSourceName === 'oe-connector-oracle') {
+    } else if (dataSourceName === 'oracle') {
       var oracledb = require('oracledb');
       oracledb.getConnection({
         'password': oraclePassword,
