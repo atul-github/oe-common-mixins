@@ -71,7 +71,7 @@ To use **AuditFieldMixin** in your project, you must include this package into y
 
 
 ```javascript
-"oe-common-mixins": "git+http://<gitpath>/oe-common-mixins.git#master"
+"oe-common-mixins": "git+http://<gitpath>/oe-common-mixins.git#2.0.0"
 ```
 
 You can also install this mixin on command line using npm install.
