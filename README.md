@@ -33,7 +33,7 @@
 
 # Introduction
 
-oeCloud mixin is functionality which can be declaratively attached to Model as **mixins** property. This module implements most commonly used functionalities which can be attached to models. These functionalities are 
+oeCloud mixin is functionality which can be declaratively attached to Model as **mixins** property. This module implements most commonly used functionalities which can be attached to models. These functionalities are
 
 * Version Mixin
 * Audit Field Mixin
@@ -56,7 +56,7 @@ In this section, we will see how we can use install this module in our project. 
 ### Testing and Code coverage
 
 ```sh
-$ git clone http://evgit/oec-next/oe-common-mixins.git
+$ git clone http://evgit/oecloud.io/oe-common-mixins.git
 $ cd oe-common-mixins
 $ npm install --no-optional
 $ npm run grunt-cover
@@ -74,7 +74,7 @@ To use **AuditFieldMixin** in your project, you must include this package into y
 "oe-common-mixins": "git+http://<gitpath>/oe-common-mixins.git#master"
 ```
 
-You can also install this mixin on command line using npm install. 
+You can also install this mixin on command line using npm install.
 
 
 ```sh
@@ -142,7 +142,7 @@ As shown above, oe-common-mixins's mixin path is declared in application. Once t
 }
 ```
 
-This will add **AuditFieldMixin** functionality to Customer model. It means that, whenever a record is created or modified, audit fields are populated. 
+This will add **AuditFieldMixin** functionality to Customer model. It means that, whenever a record is created or modified, audit fields are populated.
 
 
 ### Loading Mixin using app-list.json
@@ -161,7 +161,7 @@ Application developer should have following in app-list.json. This will attach a
     "path": "oe-common-mixins",
     "enabled": true
   },
-...  
+...
 ```
 
 If you want only **AuditFieldMixin** to be enabled by default, then you can have app-list.json entry as below.
@@ -176,7 +176,7 @@ If you want only **AuditFieldMixin** to be enabled by default, then you can have
 	"HistoryMixin" : false,
     "enabled": true
   },
-...  
+...
 ```
 
 **Note** : This is ideal way of loading mixin.
@@ -204,7 +204,7 @@ oecloud.observe('loaded', function (ctx, next) {
 
 ## Developer Considerations
 
-* AuditFieldMixin operates on context information of remoteUser. For http request, this information is populated in context based on AccessToken. If this information is not available, then remote user will be set to **system**. 
+* AuditFieldMixin operates on context information of remoteUser. For http request, this information is populated in context based on AccessToken. If this information is not available, then remote user will be set to **system**.
 * When call is made from JavaScript code, you either have to pass remoteUser in context or this mixin will set **createdBy** and **updatedBy** to **system**
 
 
@@ -218,13 +218,13 @@ Consider following scenario
 - Request1 update balance to 500+100 = 600 and sets balance to 600
 - Request2 updates balance to 500+200 = 700 and sets balance to 700
 
-Both requests are successfully executed but new balance is not right. 
+Both requests are successfully executed but new balance is not right.
 
-To avoid this, VersionMixin plays important role. 
-* Version mixin maintains the version of each record. 
+To avoid this, VersionMixin plays important role.
+* Version mixin maintains the version of each record.
 * When record gets updated, _version field changes to new value
 * Programmer / caller must always has to pass current version for update operation
-* Since for every update version gets change, above issue is prevented. In that scenario, request2 would get error as version mismatch. 
+* Since for every update version gets change, above issue is prevented. In that scenario, request2 would get error as version mismatch.
 
 
 ## Using VersionMixin
@@ -241,16 +241,16 @@ To use **VersionMixin** you must load this mixin into your application. Usually 
 
 ### Loading VersionMixin using model-config.json
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 ### Loading Mixin using app-list.json
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 
 ### Loading Mixin pragmatically
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 ## Developer Considerations
 
@@ -288,16 +288,16 @@ _isDeleted : Default value of this field (or property) is false. When applicatio
 
 ### Loading Mixin using model-config.json
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 ### Loading Mixin using app-list.json
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 
 ### Loading Mixin pragmatically
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 **Note** : Usually app-list.json way of loading is prefereed.
 
@@ -323,7 +323,7 @@ connector.observe("execute", function(ctx, next){
 
 In cryptography, encryption is the process of encoding messages or information in such a way that only authorized parties can read it. Encryption does not prevent interception, but denies the message content to the interceptor. In an encryption scheme, the intended communication information or message, referred to as plaintext, is encrypted using an encryption algorithm, generating ciphertext that can only be read if decrypted. An authorized recipient can easily decrypt the message with the key provided by the originator to recipients, but not to unauthorized interceptors.
 
-In the oeCloud.io based application, it is possible to encrypt "data at rest". 
+In the oeCloud.io based application, it is possible to encrypt "data at rest".
 With this feature, you can declare a model property to be persisted in an encrypted manner in the database. Meaning, for example, you can have model called CreditCard and you can save actual credit card number in encrypted form itself in database.
 
 
@@ -351,7 +351,7 @@ This is enabled by adding a "encrypt" : true  flag to model properties while def
     "name": "BBModel",
     "description": "BBModel",
     "plural": "BBModels",
- 
+
   }
 
 ```
@@ -361,20 +361,20 @@ Upon retrieval of the data (using find / findById etc., ) the response will cont
 
 ### Loading Crypto Mixin using model-config.json
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 ### Loading Mixin using app-list.json
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 ### Loading Mixin pragmatically
 
-Please refer to above section for *AuditFieldMixin** 
+Please refer to above section for *AuditFieldMixin**
 
 **Note** : Usually app-list.json way of loading is prefereed.
 
 ## Configuration
-The encryption algorithm is configurable via config.json. 
+The encryption algorithm is configurable via config.json.
 Two related config params are added to config.json: encryptionAlgorithm and encryptionPassword.
 Application level config parameters are prioritized over foundation level ones.
 Currently the following values are allowed for encryptionAlgorithm:
