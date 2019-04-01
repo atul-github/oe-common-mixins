@@ -69,7 +69,7 @@ mongotest:
     expire_in: 2h
     paths:
       - coverage/
-      - atifacts/
+      - artifacts/
   tags:
     - CEP_RUNNER_EE
 
