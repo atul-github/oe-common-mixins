@@ -13,7 +13,8 @@
   },
   "mixins": {
     "VersionMixin": false,
-    "SoftDeleteMixin": true
+    "SoftDeleteMixin": true,
+    "CryptoMixin": false
   },
   "validations": [],
   "acls": [],
