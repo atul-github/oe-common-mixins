@@ -11,7 +11,7 @@ var loopback = require('loopback');
 var bootstrap = require('./bootstrap');
 const uuidv4 = require('uuid/v4');
 var debug = require('debug')('history-mixin-test');
-/*var oecloud = require('oe-cloud');
+/* var oecloud = require('oe-cloud');
 var loopback = require('loopback');
 
 oecloud.observe('loaded', function (ctx, next) {
@@ -40,30 +40,12 @@ var expect = chai.expect;
 var app = oecloud;
 var defaults = require('superagent-defaults');
 var supertest = require('supertest');
-var Customer;
 var api = defaults(supertest(app));
+
 var basePath = app.get('restApiRoot');
-var url = basePath + '/Employees';
 
 var models = oecloud.models;
 
-function deleteAllUsers(done) {
-  var userModel = loopback.findModel("User");
-  userModel.destroyAll({}, { notify: false }, function (err) {
-    if (err) {
-      return done(err);
-    }
-    userModel.find({}, {}, function (err2, r2) {
-      if (err2) {
-        return done(err2);
-      }
-      if (r2 && r2.length > 0) {
-        return done(new Error("Error : users were not deleted"));
-      }
-    });
-    return done(err);
-  });
-}
 
 var globalCtx = {
   ignoreAutoScope: true,
@@ -282,10 +264,54 @@ describe(chalk.blue('History Mixin Test Started'), function (done) {
     });
 
 
+  it('t6 (oecloud 2.x test) create record and then update using replacebyid', function (done) {
+    this.timeout(50000);
+    var postData = {
+      id: 123,
+      name: "Atul",
+      age: 30
+    };
+    var customerModel = loopback.findModel('Customer');
+    customerModel.create(postData, globalCtx, function (err, customer) {
+      if (err) {
+        return done(err);
+      } else {
+        customerModel.replaceById(customer.id, { name: "Atul111", age: 31, _version: customer._version }, globalCtx, function (err, customer2) {
+          if (err) {
+            return done(err);
+          }
+          var newData = customer2.toObject();
+          newData.name = 'Atul222';
+          customerModel.replaceOrCreate(newData, globalCtx, function (err, customer3) {
+            if (err) {
+              return done(err);
+            }
+            customer3.updateAttributes({ name: "Atul3333", age: 35, id: customer3.id, _version: customer3._version }, globalCtx, function (err, customer4) {
+              if (err) {
+                return done(err);
+              }
+              if (customer4.name !== 'Atul3333' || customer4.age !== 35) {
+                return done(new Error("data not matching. expetcing name change"));
+              }
+              var url = basePath + '/Customers/history?filter={"where" : { "_modelId" : 123 } }';
 
+              api
+                .get(url)
+                .send()
+                .expect(200).end(function (err, historyRes) {
+                  if (err) {
+                    return done(err);
+                  } else {
+                    expect(historyRes.body).not.to.be.empty;
+                    expect(historyRes.body).to.have.length(3);
+                    return done();
+                  }
+                });
+            })
+          })
+        })
+      }
+    });
+  });
 });
-
-
-
-
 
